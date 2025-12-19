@@ -141,9 +141,7 @@ vless-config-converter - это конвертер ссылок Vless в гот�
     В поле <code>VLESS Link</code> вставьте вашу VLESS-ссылку.
     <br>
     <strong>Пример:</strong>
-    <code>
-      vless://UUID@vpn.example.com:443?type=tcp&security=reality&pbk=...&fp=chrome&sni=www.cloudflare.com#My_VLESS_Node
-    </code>
+    <code>vless://UUID@vpn.example.com:443?type=tcp&security=reality&pbk=...&fp=chrome&sni=www.cloudflare.com#My_VLESS_Node</code>
   </li>
 
   <li>
