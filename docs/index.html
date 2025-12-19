@@ -1,68 +1,192 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VLESS → Clash Config Converter</title>
-  <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Professional VLESS to Clash config converter">
+    <title>VLESS → Clash Converter</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
 </head>
-
-
 <body>
-  <main class="container">
-    <header class="header">
-        <div class="logo">
-            <h1>VLESS → Clash Config</h1>
-        </div>
-        <p class="subtitle">Перевод VLESS-ссылок в конфиг для Clash (Meta) | Clash Verge</p>
-        <p class="subtitle">Разработчик <strong>Anik Beris</strong></p>
-    </header>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">VLESS → Clash</h1>
+                <div class="header-controls">
+                    <div class="language-switcher">
+                        <button class="lang-btn active" data-lang="ru">RU</button>
+                        <button class="lang-btn" data-lang="en">EN</button>
+                    </div>
+                </div>
+            </div>
+            <p class="subtitle" data-i18n="subtitle"></p>
+            <div class="credit">
+                <span class="icon">⚡</span>
+                <span data-i18n="developer"></span>
+            </div>
+        </header>
 
-    <section class="input-section">
-      <label for="vlessInput">VLESS ссылка</label>
-      <textarea id="vlessInput" placeholder="vless://uuid@server:port?encryption=none&security=tls&type=tcp&sni=example.com#Name"></textarea>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="converter-section">
+                <!-- Input Form -->
+                <div class="card input-card">
+                    <h2 class="card-title" data-i18n="input_title"></h2>
+                    <form id="converterForm" class="converter-form">
+                        <div class="form-group">
+                            <label for="vlessLink" data-i18n="vless_link"></label>
+                            <input 
+                                type="text" 
+                                id="vlessLink" 
+                                class="input-field"
+                                data-i18n-placeholder="vless_placeholder"
+                                required
+                            >
+                            <span class="input-hint" data-i18n="vless_hint"></span>
+                        </div>
 
-      <div class="options">
-        <div class="option-group">
-          <label for="countrySelect">Флаг страны</label>
-          <select id="countrySelect">
-            <option value="" selected>Без Флага</option>
-            <option value="🇺🇸">🇺🇸 США</option>
-            <option value="🇬🇪">🇬🇪 Грузия</option>
-            <option value="🇫🇷">🇫🇷 Франция</option>
-            <option value="🇫🇮">🇫🇮 Финляндия</option>
-            <option value="🇦🇲">🇦🇲 Армения</option>
-            <option value="🇪🇪">🇪🇪 Эстония</option>
-            <option value="🇮🇳">🇮🇳 Индия</option>
-          </select>
-        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="countryFlag" data-i18n="country_flag"></label>
+                                <select id="countryFlag" class="select-field">
+                                    <option value="" data-i18n="no_flag"></option>
+                                    <option value="🇺🇸">🇺🇸 USA</option>
+                                    <option value="🇬🇧">🇬🇧 UK</option>
+                                    <option value="🇩🇪">🇩🇪 Germany</option>
+                                    <option value="🇫🇷">🇫🇷 France</option>
+                                    <option value="🇳🇱">🇳🇱 Netherlands</option>
+                                    <option value="🇸🇪">🇸🇪 Sweden</option>
+                                    <option value="🇫🇮">🇫🇮 Finland</option>
+                                    <option value="🇵🇱">🇵🇱 Poland</option>
+                                    <option value="🇨🇿">🇨🇿 Czech</option>
+                                    <option value="🇦🇹">🇦🇹 Austria</option>
+                                    <option value="🇨🇭">🇨🇭 Switzerland</option>
+                                    <option value="🇪🇪">🇪🇪 Estonia</option>
+                                    <option value="🇱🇻">🇱🇻 Latvia</option>
+                                    <option value="🇱🇹">🇱🇹 Lithuania</option>
+                                    <option value="🇬🇪">🇬🇪 Georgia</option>
+                                    <option value="🇦🇲">🇦🇲 Armenia</option>
+                                    <option value="🇺🇦">🇺🇦 Ukraine</option>
+                                    <option value="🇰🇿">🇰🇿 Kazakhstan</option>
+                                    <option value="🇹🇷">🇹🇷 Turkey</option>
+                                    <option value="🇦🇪">🇦🇪 UAE</option>
+                                    <option value="🇸🇬">🇸🇬 Singapore</option>
+                                    <option value="🇯🇵">🇯🇵 Japan</option>
+                                    <option value="🇰🇷">🇰🇷 Korea</option>
+                                    <option value="🇭🇰">🇭🇰 Hong Kong</option>
+                                    <option value="🇹🇼">🇹🇼 Taiwan</option>
+                                    <option value="🇮🇳">🇮🇳 India</option>
+                                    <option value="🇦🇺">🇦🇺 Australia</option>
+                                    <option value="🇧🇷">🇧🇷 Brazil</option>
+                                    <option value="🇦🇷">🇦🇷 Argentina</option>
+                                    <option value="🇨🇦">🇨🇦 Canada</option>
+                                    <option value="🇲🇽">🇲🇽 Mexico</option>
+                                </select>
+                            </div>
 
-        <div class="option-group">
-          <label for="customName">Имя</label>
-          <input type="text" id="customName" placeholder="Server vless">
-        </div>
-      </div>
+                            <div class="form-group">
+                                <label for="proxyName" data-i18n="proxy_name"></label>
+                                <input 
+                                    type="text" 
+                                    id="proxyName" 
+                                    class="input-field"
+                                    data-i18n-placeholder="name_placeholder"
+                                    value="VLESS Proxy"
+                                >
+                            </div>
+                        </div>
 
-      <div class="buttons">
-        <button onclick="convert()">Только прокси</button>
-        <button onclick="generateFullConfig()">Полный конфиг</button>
-      </div>
-    </section>
+                        <div class="form-group">
+                            <label data-i18n="config_type"></label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="configType" value="proxy" checked>
+                                    <span class="radio-label" data-i18n="proxy_only"></span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="configType" value="full">
+                                    <span class="radio-label" data-i18n="full_config"></span>
+                                </label>
+                            </div>
+                        </div>
 
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-icon">🚀</span>
+                            <span data-i18n="convert_btn"></span>
+                        </button>
+                    </form>
+                </div>
 
-    <section class="output-section">
-      <div class="output-header">
-        <h2>Результат</h2>
-        <div class="output-buttons">
-          <button onclick="copyResult()" class="copy-btn">Копировать</button>
-          <button onclick="downloadFile('yml')" id="download-yml" class="download-btn" disabled>Скачать .yml</button>
-          <button onclick="downloadFile('conf')" id="download-conf" class="download-btn" disabled>Скачать .conf</button>
-        </div>
-      </div>
-      <pre id="output"></pre>
-    </section>
-  </main>
+                <!-- Preview Card -->
+                <div class="card preview-card" id="previewCard">
+                    <h2 class="card-title" data-i18n="preview_title"></h2>
+                    <div class="preview-content">
+                        <div class="preview-info">
+                            <div class="info-row">
+                                <span class="info-label" data-i18n="server"></span>
+                                <span class="info-value" id="previewServer">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label" data-i18n="port"></span>
+                                <span class="info-value" id="previewPort">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label" data-i18n="uuid"></span>
+                                <span class="info-value" id="previewUuid">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label" data-i18n="security"></span>
+                                <span class="info-value" id="previewSecurity">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label" data-i18n="network"></span>
+                                <span class="info-value" id="previewNetwork">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <script src="js/script.js"></script>
+            <!-- Result Section -->
+            <div class="card result-card" id="resultCard">
+                <div class="result-header">
+                    <h2 class="card-title" data-i18n="result_title"></h2>
+                    <div class="btn-group">
+                        <button class="btn btn-secondary" onclick="copyResult()">
+                            <span class="btn-icon">📋</span>
+                            <span data-i18n="copy_btn"></span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadYaml()">
+                            <span class="btn-icon">💾</span>
+                            <span>.yml</span>
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadConf()">
+                            <span class="btn-icon">💾</span>
+                            <span>.conf</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="result-content">
+                    <textarea id="result" class="result-textarea" readonly></textarea>
+                </div>
+                <div class="toast" id="toast">
+                    <span class="toast-icon">✓</span>
+                    <span class="toast-message" data-i18n="copied"></span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy;<span data-i18n="footer_text"></span></p>
+        </footer>
+    </div>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/converter.js"></script>
+    <script src="js/preview.js"></script>
+    <script src="js/app.js"></script>
 </body>
-</html>

@@ -1,110 +1,118 @@
-function parseVLESS(input) {
-  const trimmed = input.trim();
-  if (!trimmed) throw new Error("Пустая ссылка");
+// VLESS Converter Module
+const VLESSConverter = {
+    parse(vlessUrl) {
+        try {
+            const url = new URL(vlessUrl);
+            const uuid = url.username;
+            const server = url.hostname;
+            const port = url.port || '443';
+            const params = new URLSearchParams(url.search);
+            
+            return {
+                uuid: uuid,
+                server: server,
+                port: port,
+                type: params.get('type') || 'tcp',
+                security: params.get('security') || 'none',
+                sni: params.get('sni') || '',
+                fp: params.get('fp') || '',
+                alpn: params.get('alpn') || '',
+                path: params.get('path') || '',
+                host: params.get('host') || '',
+                flow: params.get('flow') || '',
+                pbk: params.get('pbk') || '',
+                sid: params.get('sid') || ''
+            };
+        } catch (e) {
+            console.error('Parse error:', e);
+            return null;
+        }
+    },
 
-  const url = new URL(trimmed);
+    generate(parsed, name, configType) {
+        if (configType === 'full') {
+            return this.generateFullConfig(parsed, name);
+        } else {
+            return this.generateProxyOnly(parsed, name);
+        }
+    },
 
-  if (url.protocol !== "vless:") throw new Error("Не VLESS-ссылка");
+    generateProxyOnly(parsed, name) {
+        const {server, port, uuid, type, security, sni, fp, flow, pbk, sid, path, host, alpn} = parsed;
+        
+        let config = `  - name: "${name}"\n`;
+        config += `    type: vless\n`;
+        config += `    server: ${server}\n`;
+        config += `    port: ${port}\n`;
+        config += `    uuid: ${uuid}\n`;
+        config += `    network: ${type}\n`;
+        config += `    udp: true\n`;
+        
+        if (security !== 'none') {
+            config += `    tls: true\n`;
+            config += `    flow: ${flow}\n`;
+            config += `    servername: ${sni}\n`;
+            
+            if (pbk) {
+                config += `    reality-opts:\n`;
+                config += `      public-key: ${pbk}\n`;
+                config += `      short-id: "${sid}"\n`;
+            }
+            
+            if (fp) {
+                config += `    client-fingerprint: ${fp}\n`;
+            }
+        }
+        
+        if (type === 'ws') {
+            config += `    ws-opts:\n`;
+            if (path) config += `      path: ${path}\n`;
+            if (host) {
+                config += `      headers:\n`;
+                config += `        Host: ${host}\n`;
+            }
+        } else if (type === 'grpc') {
+            config += `    grpc-opts:\n`;
+            if (path) config += `      grpc-service-name: ${path}\n`;
+        }
+        
+        return config;
+    },
 
-  const uuid = url.username;
-  if (!uuid) throw new Error("Нет UUID");
-
-  const server = url.hostname;
-  if (!server) throw new Error("Нет сервера");
-
-  const port = url.port || 443; // по умолчанию 443 для VLESS с TLS/Reality
-
-  const params = Object.fromEntries(url.searchParams);
-
-  // Нормализуем параметры
-  const security = params.security || (params.pbk ? "reality" : "tls"); // если есть pbk — reality
-
-  return { uuid, server, port, params, security };
-}
-
-function getNodeName() {
-  const flag = document.getElementById('countrySelect').value;
-  const rawName = document.getElementById('customName').value.trim() || "Server vless";
-  return `${flag} ${rawName}`;
-}
-
-function enableDownloadButtons() {
-  document.getElementById('download-yml').disabled = false;
-  document.getElementById('download-conf').disabled = false;
-}
-
-function disableDownloadButtons() {
-  document.getElementById('download-yml').disabled = true;
-  document.getElementById('download-conf').disabled = true;
-}
-
-function convert() {
-  const input = document.getElementById('vlessInput').value;
-  const output = document.getElementById('output');
-
-  try {
-    const { uuid, server, port, params, security } = parseVLESS(input);
-    const name = getNodeName();
-
-    let yaml = `proxies:
-  - name: "${name}"
+    generateFullConfig(parsed, name) {
+        const {server, port, uuid, type, flow, sni, pbk, sid, fp} = parsed;
+        
+        const proxyBlock = `  - name: "${name}"
     type: vless
     server: ${server}
     port: ${port}
     uuid: ${uuid}
-    network: ${params.type || "tcp"}
+    network: ${type}
     udp: true
-    tls: ${security !== "none"}
-    flow: "${params.flow || ''}"
-    servername: "${params.sni || ''}"
-    client-fingerprint: "${params.fp || "chrome"}"`;
-
-    if (security === "reality") {
-      yaml += `
+    tls: true
+    flow: ${flow}
+    servername: ${sni}
     reality-opts:
-      public-key: "${params.pbk || ''}"
-      short-id: "${params.sid || ''}"`;
-    }
-
-    output.textContent = yaml;
-    enableDownloadButtons();
-  } catch (e) {
-    output.textContent = `Ошибка: ${e.message || "неверная VLESS-ссылка"}`;
-    disableDownloadButtons();
-  }
-}
-
-function generateFullConfig() {
-  const input = document.getElementById('vlessInput').value;
-  const output = document.getElementById('output');
-
-  try {
-    const { uuid, server, port, params, security } = parseVLESS(input);
-    const name = getNodeName();
-
-    // Динамический прокси-блок
-    let proxyBlock = `  - name: "${name}"
+      public-key: ${pbk}
+      short-id: "${sid}"
+    client-fingerprint: ${fp}
+    
+  - name: "❌BLOCK_PROGRAM❌"
     type: vless
-    server: ${server}
-    port: ${port}
-    uuid: ${uuid}
-    network: ${params.type || "tcp"}
+    server: 666.999.666.999
+    port: 40347
+    uuid: 8f24c3e6-b616-4aac-af09-6b3f257754b1
+    network: tcp
     udp: true
-    tls: ${security !== "none"}
-    flow: "${params.flow || ''}"
-    servername: "${params.sni || ''}"
-    client-fingerprint: "${params.fp || "chrome"}"`;
-
-    if (security === "reality") {
-      proxyBlock += `
+    tls: true
+    flow: xtls-rprx-vision
+    servername: google.com
     reality-opts:
-      public-key: "${params.pbk || ''}"
-      short-id: "${params.sid || ''}"`;
-    }
+      public-key: MRPlp1Mn8VSXgg0WjCRnxN4htzm_43oeYffrBjClblw
+      short-id: "a313cb9b"
+    client-fingerprint: chrome`;
 
-    // Полный конфиг — вставь сюда ВЕСЬ свой оригинальный конфиг из первого сообщения
-    // Главное: замени старый proxies-блок на наш динамический + блокировщик
-    const fullConfig = `port: 7890
+        return `port: 7890
 socks-port: 7891
 redir-port: 7892
 allow-lan: true
@@ -135,22 +143,22 @@ dns:
   listen: 127.0.0.1:6868
   enhanced-mode: fake-ip
   default-nameserver:
-    - 77.88.8.8  # Yandex DNS
-    - 94.140.14.14  # AdGuard DNS
-    - 1.1.1.1  # Cloudflare
+    - 77.88.8.8
+    - 94.140.14.14
+    - 1.1.1.1
     - 8.8.8.8
     - 1.0.0.1
   nameserver:
     - https://1.1.1.1/dns-query#PROXY
     - https://8.8.8.8/dns-query#PROXY
     - https://1.0.0.1/dns-query#PROXY
-    - 77.88.8.8  # Yandex DNS
-    - 94.140.14.14  # AdGuard DNS
-    - 1.1.1.1  # Cloudflare
+    - 77.88.8.8
+    - 94.140.14.14
+    - 1.1.1.1
   fallback:
     - 8.8.8.8
-    - 9.9.9.9  # Google DNS
-    - 1.0.0.1  # Cloudflare Backup
+    - 9.9.9.9
+    - 1.0.0.1
   fallback-filter:
     geoip: true
     ipcidr:
@@ -158,21 +166,6 @@ dns:
 
 proxies:
 ${proxyBlock}
-    
-  - name: "❌BLOCK_PROGRAM❌"
-    type: vless
-    server: 666.999.666.999
-    port: 40347
-    uuid: 8f24c3e6-b616-4aac-af09-6b3f257754b1
-    network: tcp
-    udp: true
-    tls: true
-    flow: xtls-rprx-vision
-    servername: google.com
-    reality-opts:
-      public-key: MRPlp1Mn8VSXgg0WjCRnxN4htzm_43oeYffrBjClblw
-      short-id: "a313cb9b"
-    client-fingerprint: chrome
 
 proxy-groups:
   - name: "🛠️Глобал🛠️_настройки_соединения"
@@ -381,6 +374,9 @@ rules:
   #- DOMAIN-SUFFIX,steampowered.com,🎮Steam🎮_настройки
   #- DOMAIN-SUFFIX,steamserver.net,🎮Steam🎮_настройки
   #- DOMAIN-SUFFIX,steamcontent.com,🎮Steam🎮_настройки
+
+  #- DOMAIN-SUFFIX,steamserver.net,🎮Steam🎮_настройки
+  #- DOMAIN-SUFFIX,steampowered.com,🎮Steam🎮_настройки
   #- DOMAIN-SUFFIX,akamaized.net,🎮Steam🎮_настройки
 
   # Wot Blitz
@@ -406,41 +402,5 @@ rules:
   - MATCH,🛠️Глобал🛠️_настройки_соединения # весь трафик не из списка будет идти через VPN
 
 # - MATCH,DIRECT # весь трафик не из списка будет идти без VPN`;
-
-    output.textContent = fullConfig;
-    enableDownloadButtons();
-  } catch (e) {
-    output.textContent = `Ошибка генерации полного конфига: ${e.message || e}`;
-    disableDownloadButtons();
-  }
-}
-
-function downloadFile(format) {
-  const text = document.getElementById('output').textContent.trim();
-  if (!text) {
-    alert("Нет данных для скачивания");
-    return;
-  }
-
-  const filename = format === 'yml' ? 'proxy.yml' : 'config.conf';
-  const mimeType = format === 'yml' ? 'text/yaml' : 'text/plain';
-
-  const blob = new Blob([text], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-function copyResult() {
-  const text = document.getElementById('output').textContent.trim();
-  if (!text) return alert("Нечего копировать");
-  navigator.clipboard.writeText(text)
-    .then(() => alert("Скопировано!"))
-    .catch(() => alert("Ошибка копирования"));
-}
+    }
+};
