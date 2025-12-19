@@ -6,9 +6,10 @@
 
 .header-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-bottom: 16px;
+    position: relative;
 }
 
 .logo {
@@ -57,6 +58,8 @@
     padding: 4px;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-1);
+    position: absolute;
+    right: 0;
 }
 
 .lang-btn {
