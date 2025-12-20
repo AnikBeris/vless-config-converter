@@ -1,5 +1,3 @@
-
-
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="./media/logo-dark.png">
@@ -7,7 +5,7 @@
   </picture>
 </p>
 
----
+
 
 <div align="center">
 
@@ -16,11 +14,6 @@
 [![GitHub Stars](https://img.shields.io/github/stars/AnikBeris?style=flat&logo=github&label=Звёзды&color=orange)](https://github.com/AnikBeris)
 
 </div>
-
-<div align="center">
-  <img src="./media/image0.gif" alt="SPACER" width="90%">
-</div>
-
 
 <h1 align="center"> 
 vless-config-converter - это конвертер ссылок Vless в готовый конфиг фаил <code>.yml</code> <code>.conf</code>
@@ -129,6 +122,12 @@ vless-config-converter - это конвертер ссылок Vless в гот�
 
 
 <h1 align="center">Подготовка к использованию</h1>
+
+<div align="center">
+  <img style="width: 50%; height: auto;" src="./media/Tutorial/Icon-vless-config-converter.png" alt="Icon-vless-config-converter">
+</div>
+
+
 
 <h2 align="center"> Откройте сайт
   <a href="https://anikberis.github.io/vless-config-converter/"target="_blank"> vless-config-converter </a>
